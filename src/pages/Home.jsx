@@ -277,6 +277,12 @@ const Home = () => {
               />
             </div>
             
+            {/* Japanese Text */}
+            <div className="text-center space-y-2 mb-6">
+              <p className="text-gray-400 text-lg font-medium">少々お待ちください</p>
+              <p className="text-gray-600 text-sm">Shōshō omachi kudasai</p>
+            </div>
+            
             {/* Loading Animation */}
             <div className="relative">
               <div className="w-12 h-12 border-4 border-white/20 border-t-white rounded-full animate-spin"></div>
