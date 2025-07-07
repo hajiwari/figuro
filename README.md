@@ -1,24 +1,46 @@
-# Figuro - React E-commerce Application
+# Figuro - Anime Figure E-Commerce Platform
 
-A modern e-commerce platform for figurine and collectible enthusiasts built with React, featuring user authentication, shopping cart functionality, favorites management, and a comprehensive product catalog.
+A modern, responsive e-commerce platform specializing in anime figures and collectibles. Built with React, Firebase, and Tailwind CSS with beautiful product cards, advanced filtering, and seamless user experience.
 
-## 🚀 Features
+![Figuro Logo](public/figuroLogo.png)
 
-### Core Functionality
-- **Product Catalog**: Browse anime figures, action figures, and collectibles
-- **User Authentication**: Sign up, sign in, and user profile management with Firebase
-- **Shopping Cart**: Add, remove, and manage items with local storage persistence
-- **Favorites System**: Save favorite items with local storage persistence
-- **Responsive Design**: Mobile-first design with Tailwind CSS
-- **Protected Routes**: Secure user-specific pages
+## 🚀 Live Demo
 
-### E-commerce Features
-- Product search and filtering
-- Category-based browsing
-- Product reviews and ratings
-- Order tracking
-- Size guides for figures
-- Shipping and return policies
+Visit the live application: [https://figuro.vercel.app](https://figuro.vercel.app)
+
+## ✨ Features
+
+### Core E-Commerce Functionality
+- **Product Catalog**: Browse anime figures with advanced filtering and search
+- **Product Details**: Detailed product pages with multiple images and specifications  
+- **Shopping Cart**: Add, remove, and manage items with persistent storage
+- **Favorites/Wishlist**: Save products for later viewing
+- **User Authentication**: Secure login and registration with Firebase Auth
+- **Order Tracking**: Track your orders with detailed status updates
+
+### Modern UI/UX
+- **Responsive Design**: Works seamlessly on desktop, tablet, and mobile
+- **Beautiful Product Cards**: Hover effects and smooth animations
+- **Image Optimization**: Top-aligned product images for better character visibility
+- **Interactive Elements**: Smooth transitions and loading states
+- **Category Navigation**: Browse by anime series, scale, brand, etc.
+- **Advanced Filtering**: Filter by price, brand, scale, availability
+
+### Additional Features
+- Help Center with comprehensive FAQ
+- Shipping and return information
+- Size guides for figure scales
+- Contact support system
+- Privacy policy and terms of service
+
+## 🛠️ Tech Stack
+
+- **Frontend**: React 18, React Router v6
+- **Styling**: Tailwind CSS, Custom CSS animations
+- **Backend**: Firebase (Authentication, Firestore Database)
+- **Icons**: Lucide React
+- **Build Tool**: Create React App
+- **Deployment**: Vercel/Netlify ready
 
 ## 📁 Project Structure
 
