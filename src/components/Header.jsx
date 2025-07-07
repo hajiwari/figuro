@@ -1,6 +1,6 @@
 // src/components/Header.jsx
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { ShoppingCart, Heart, User, Menu, X, Search, LogOut } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
@@ -16,6 +16,7 @@ const Header = () => {
   const { getTotalItems } = useCart();
   const { favorites } = useFavorites();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleLogout = async () => {
     try {
@@ -52,7 +53,7 @@ const Header = () => {
             <img 
               src={figuroLogo} 
               alt="Figuro Logo" 
-              className="h-8 w-auto object-contain transform group-hover:scale-105 transition-transform duration-200 filter invert brightness-0 contrast-100"
+              className="h-6 w-auto object-contain transform group-hover:scale-105 transition-transform duration-200 filter invert brightness-0 contrast-100"
             />
           </Link>
 
@@ -65,7 +66,7 @@ const Header = () => {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search for amazing figurines..."
-                  className="w-full pl-12 pr-4 py-3 bg-gray-800 border-2 border-gray-700 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-gray-500 focus:bg-gray-700 transition-all duration-300 text-white placeholder-gray-400"
+                  className="w-full pl-12 pr-4 py-3 bg-gray-800 rounded-2xl focus:outline-none focus:bg-gray-700 transition-all duration-300 text-white placeholder-gray-400"
                 />
                 <Search className="absolute left-4 top-3.5 h-5 w-5 text-gray-400 group-focus-within:text-gray-300 transition-colors" />
                 <button
@@ -82,33 +83,61 @@ const Header = () => {
           <nav className="hidden lg:flex items-center space-x-8">
             <Link 
               to="/products" 
-              className="text-gray-300 hover:text-gray-100 transition-colors duration-200 font-medium relative group"
+              className={`transition-colors duration-200 font-medium relative group ${
+                location.pathname.startsWith('/products') 
+                  ? 'text-yellow-400' 
+                  : 'text-gray-300 hover:text-gray-100'
+              }`}
             >
               Products
-              <span className="absolute inset-x-0 -bottom-1 h-0.5 bg-gray-300 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-200"></span>
+              <span className={`absolute inset-x-0 -bottom-1 h-0.5 transform transition-transform duration-200 ${
+                location.pathname.startsWith('/products')
+                  ? 'bg-yellow-400 scale-x-100'
+                  : 'bg-gray-300 scale-x-0 group-hover:scale-x-100'
+              }`}></span>
             </Link>
             <Link 
               to="/categories" 
-              className="text-gray-300 hover:text-gray-100 transition-colors duration-200 font-medium relative group"
+              className={`transition-colors duration-200 font-medium relative group ${
+                location.pathname.startsWith('/categories') 
+                  ? 'text-yellow-400' 
+                  : 'text-gray-300 hover:text-gray-100'
+              }`}
             >
               Categories
-              <span className="absolute inset-x-0 -bottom-1 h-0.5 bg-gray-300 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-200"></span>
+              <span className={`absolute inset-x-0 -bottom-1 h-0.5 transform transition-transform duration-200 ${
+                location.pathname.startsWith('/categories')
+                  ? 'bg-yellow-400 scale-x-100'
+                  : 'bg-gray-300 scale-x-0 group-hover:scale-x-100'
+              }`}></span>
             </Link>
             <Link 
               to="/about" 
-              className="text-gray-300 hover:text-gray-100 transition-colors duration-200 font-medium relative group"
+              className={`transition-colors duration-200 font-medium relative group ${
+                location.pathname.startsWith('/about') 
+                  ? 'text-yellow-400' 
+                  : 'text-gray-300 hover:text-gray-100'
+              }`}
             >
               About
-              <span className="absolute inset-x-0 -bottom-1 h-0.5 bg-gray-300 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-200"></span>
+              <span className={`absolute inset-x-0 -bottom-1 h-0.5 transform transition-transform duration-200 ${
+                location.pathname.startsWith('/about')
+                  ? 'bg-yellow-400 scale-x-100'
+                  : 'bg-gray-300 scale-x-0 group-hover:scale-x-100'
+              }`}></span>
             </Link>
           </nav>
 
           {/* Action Buttons */}
           <div className="flex items-center space-x-4 ml-8">
-            {/* Favorites */}
+            {/* Favorites - Hidden on mobile */}
             <Link 
               to="/favorites" 
-              className="relative p-3 text-gray-300 hover:text-accent-400 transition-all duration-200 hover:bg-gray-800 rounded-xl group"
+              className={`hidden md:flex relative p-3 transition-all duration-200 rounded-xl group ${
+                location.pathname === '/favorites'
+                  ? 'text-yellow-400 bg-gray-800'
+                  : 'text-gray-300 hover:text-accent-400 hover:bg-gray-800'
+              }`}
             >
               <Heart className="h-5 w-5 group-hover:scale-110 transition-transform" />
               {favorites.length > 0 && (
@@ -118,14 +147,18 @@ const Header = () => {
               )}
             </Link>
 
-            {/* Cart */}
+            {/* Cart - Hidden on mobile */}
             <Link 
               to="/cart" 
-              className="relative p-3 text-gray-300 hover:text-gray-100 transition-all duration-200 hover:bg-gray-800 rounded-xl group"
+              className={`hidden md:flex relative p-3 transition-all duration-200 rounded-xl group ${
+                location.pathname === '/cart'
+                  ? 'text-yellow-400 bg-gray-800'
+                  : 'text-gray-300 hover:text-gray-100 hover:bg-gray-800'
+              }`}
             >
               <ShoppingCart className="h-5 w-5 group-hover:scale-110 transition-transform" />
               {getTotalItems() > 0 && (
-                <span className="absolute -top-1 -right-1 bg-gradient-to-r from-gray-600 to-gray-700 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-semibold animate-pulse">
+                <span className="absolute -top-1 -right-1 bg-gradient-to-r from-blue-500 to-blue-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-semibold animate-pulse">
                   {getTotalItems()}
                 </span>
               )}
@@ -195,7 +228,7 @@ const Header = () => {
                   </Link>
                   <Link
                     to="/signup"
-                    className="bg-gradient-to-r from-gray-600 to-gray-700 text-white px-6 py-2.5 rounded-xl hover:from-gray-700 hover:to-gray-800 transition-all duration-200 font-medium shadow-medium hover:shadow-strong transform hover:scale-105"
+                    className="hidden md:inline-block bg-gradient-to-r from-yellow-400 to-yellow-500 text-black px-6 py-2.5 rounded-xl hover:from-yellow-500 hover:to-yellow-600 transition-all duration-200 font-medium shadow-medium hover:shadow-strong transform hover:scale-105"
                   >
                     Sign Up
                   </Link>
@@ -224,31 +257,99 @@ const Header = () => {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search figurines..."
-                  className="w-full pl-12 pr-4 py-3 bg-gray-800 border-2 border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 focus:bg-gray-700 transition-all text-white placeholder-gray-400"
+                  className="w-full pl-12 pr-4 py-3 bg-gray-800 rounded-xl focus:outline-none focus:bg-gray-700 transition-all text-white placeholder-gray-400"
                 />
                 <Search className="absolute left-4 top-3.5 h-5 w-5 text-gray-400" />
               </div>
             </form>
 
+            {/* Divider */}
+            <div className="flex items-center mb-4">
+              <div className="flex-1 h-px bg-gray-700"></div>
+              <span className="px-3 text-xs text-gray-400 font-medium">Quick Access</span>
+              <div className="flex-1 h-px bg-gray-700"></div>
+            </div>
+
+            {/* Mobile Cart and Favorites - Below Search */}
+            <div className="grid grid-cols-2 gap-4 mb-6">
+              <Link
+                to="/favorites"
+                className={`relative flex flex-col items-center justify-center transition-all py-4 px-3 rounded-xl border ${
+                  location.pathname === '/favorites'
+                    ? 'text-yellow-400 bg-gray-800 border-yellow-400/30'
+                    : 'text-gray-300 hover:text-white hover:bg-gray-800 border-gray-700 hover:border-gray-600'
+                }`}
+                onClick={() => setIsMenuOpen(false)}
+              >
+                <div className="relative">
+                  <Heart className="h-6 w-6 mb-2" />
+                  {favorites.length > 0 && (
+                    <span className="absolute -top-1 -right-2 bg-gradient-to-r from-accent-500 to-accent-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-semibold">
+                      {favorites.length}
+                    </span>
+                  )}
+                </div>
+                <span className="text-sm font-medium">Favorites</span>
+              </Link>
+              <Link
+                to="/cart"
+                className={`relative flex flex-col items-center justify-center transition-all py-4 px-3 rounded-xl border ${
+                  location.pathname === '/cart'
+                    ? 'text-yellow-400 bg-gray-800 border-yellow-400/30'
+                    : 'text-gray-300 hover:text-white hover:bg-gray-800 border-gray-700 hover:border-gray-600'
+                }`}
+                onClick={() => setIsMenuOpen(false)}
+              >
+                <div className="relative">
+                  <ShoppingCart className="h-6 w-6 mb-2" />
+                  {getTotalItems() > 0 && (
+                    <span className="absolute -top-1 -right-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-semibold">
+                      {getTotalItems()}
+                    </span>
+                  )}
+                </div>
+                <span className="text-sm font-medium">Cart</span>
+              </Link>
+            </div>
+
+            {/* Navigation Divider */}
+            <div className="flex items-center mb-4">
+              <div className="flex-1 h-px bg-gray-700"></div>
+              <span className="px-3 text-xs text-gray-400 font-medium">Navigation</span>
+              <div className="flex-1 h-px bg-gray-700"></div>
+            </div>
+
             {/* Mobile Navigation */}
             <nav className="space-y-2">
               <Link
                 to="/products"
-                className="flex items-center text-gray-300 hover:text-primary-400 hover:bg-gray-800 transition-all py-3 px-4 rounded-xl font-medium"
+                className={`flex items-center transition-all py-3 px-4 rounded-xl font-medium ${
+                  location.pathname.startsWith('/products')
+                    ? 'text-yellow-400 bg-gray-800'
+                    : 'text-gray-300 hover:text-primary-400 hover:bg-gray-800'
+                }`}
                 onClick={() => setIsMenuOpen(false)}
               >
                 Products
               </Link>
               <Link
                 to="/categories"
-                className="flex items-center text-gray-300 hover:text-primary-400 hover:bg-gray-800 transition-all py-3 px-4 rounded-xl font-medium"
+                className={`flex items-center transition-all py-3 px-4 rounded-xl font-medium ${
+                  location.pathname.startsWith('/categories')
+                    ? 'text-yellow-400 bg-gray-800'
+                    : 'text-gray-300 hover:text-primary-400 hover:bg-gray-800'
+                }`}
                 onClick={() => setIsMenuOpen(false)}
               >
                 Categories
               </Link>
               <Link
                 to="/about"
-                className="flex items-center text-gray-300 hover:text-primary-400 hover:bg-gray-800 transition-all py-3 px-4 rounded-xl font-medium"
+                className={`flex items-center transition-all py-3 px-4 rounded-xl font-medium ${
+                  location.pathname.startsWith('/about')
+                    ? 'text-yellow-400 bg-gray-800'
+                    : 'text-gray-300 hover:text-primary-400 hover:bg-gray-800'
+                }`}
                 onClick={() => setIsMenuOpen(false)}
               >
                 About

@@ -1,18 +1,45 @@
 // src/pages/Favorites.jsx
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Heart, ShoppingCart, ArrowRight } from 'lucide-react';
+import { Heart, ShoppingCart, ArrowRight, Trash2 } from 'lucide-react';
 import { useFavorites } from '../context/FavoritesContext';
 import { useCart } from '../context/CartContext';
 import ProductCard from '../components/ProductCard';
+import Dialog from '../components/Dialog';
 
 const Favorites = () => {
   const { favorites, clearFavorites } = useFavorites();
-  const { addItem } = useCart();
+  const { addItem, isInCart } = useCart();
+  const [showClearFavoritesDialog, setShowClearFavoritesDialog] = useState(false);
+  const [showAddAllToCartDialog, setShowAddAllToCartDialog] = useState(false);
 
   const handleAddAllToCart = () => {
-    favorites.forEach(item => addItem(item));
+    setShowAddAllToCartDialog(true);
   };
+
+  const handleConfirmAddAllToCart = () => {
+    let addedCount = 0;
+    favorites.forEach(item => {
+      addItem(item);
+      addedCount++;
+    });
+    setShowAddAllToCartDialog(false);
+    
+    // Could show a success message here
+    console.log(`Added ${addedCount} items to cart`);
+  };
+
+  const handleClearFavorites = () => {
+    setShowClearFavoritesDialog(true);
+  };
+
+  const handleConfirmClearFavorites = () => {
+    clearFavorites();
+    setShowClearFavoritesDialog(false);
+  };
+
+  // Count how many favorites are already in cart
+  const itemsAlreadyInCart = favorites.filter(item => isInCart(item.id)).length;
 
   if (favorites.length === 0) {
     return (
@@ -26,7 +53,7 @@ const Favorites = () => {
             </p>
             <Link
               to="/products"
-              className="bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors inline-flex items-center"
+              className="bg-yellow-500 text-white px-8 py-3 rounded-lg font-semibold hover:bg-yellow-600 transition-colors inline-flex items-center shadow-md hover:shadow-lg"
             >
               Explore Products
               <ArrowRight className="ml-2 h-5 w-5" />
@@ -52,14 +79,14 @@ const Favorites = () => {
           <div className="flex flex-col sm:flex-row gap-3 mt-4 sm:mt-0">
             <button
               onClick={handleAddAllToCart}
-              className="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors inline-flex items-center"
+              className="bg-green-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors inline-flex items-center shadow-md hover:shadow-lg"
             >
               <ShoppingCart className="h-5 w-5 mr-2" />
               Add All to Cart
             </button>
             <button
-              onClick={clearFavorites}
-              className="bg-white text-gray-700 px-6 py-3 rounded-lg font-semibold border border-gray-300 hover:bg-gray-50 transition-colors"
+              onClick={handleClearFavorites}
+              className="text-red-600 hover:text-red-800 px-6 py-3 rounded-lg font-semibold border border-red-200 hover:border-red-300 transition-colors"
             >
               Clear Favorites
             </button>
@@ -77,7 +104,7 @@ const Favorites = () => {
         <div className="mt-12 text-center">
           <Link
             to="/products"
-            className="text-blue-600 hover:text-blue-800 font-medium inline-flex items-center"
+            className="text-yellow-500 hover:text-yellow-600 font-medium inline-flex items-center"
           >
             <ArrowRight className="mr-2 h-5 w-5 rotate-180" />
             Continue Shopping
@@ -126,6 +153,55 @@ const Favorites = () => {
           </div>
         </div>
       </div>
+
+      {/* Dialogs */}
+      <Dialog
+        isOpen={showAddAllToCartDialog}
+        onClose={() => setShowAddAllToCartDialog(false)}
+        title="Add All to Cart"
+        icon={ShoppingCart}
+        iconBgColor="bg-green-100"
+        iconColor="text-green-600"
+        primaryAction={{
+          label: "Add All",
+          onClick: handleConfirmAddAllToCart,
+          className: "bg-green-500 text-white hover:bg-green-600"
+        }}
+        secondaryAction={{
+          label: "Cancel"
+        }}
+      >
+        <div className="text-left">
+          <p className="text-gray-600 mb-4">
+            This will add all {favorites.length} favorite item{favorites.length !== 1 ? 's' : ''} to your cart.
+          </p>
+          {itemsAlreadyInCart > 0 && (
+            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
+              <p className="text-yellow-800 text-sm">
+                <strong>Note:</strong> {itemsAlreadyInCart} item{itemsAlreadyInCart !== 1 ? 's are' : ' is'} already in your cart. Adding them again will increase their quantity.
+              </p>
+            </div>
+          )}
+        </div>
+      </Dialog>
+
+      <Dialog
+        isOpen={showClearFavoritesDialog}
+        onClose={() => setShowClearFavoritesDialog(false)}
+        title="Clear Favorites"
+        description={`Are you sure you want to remove all ${favorites.length} item${favorites.length !== 1 ? 's' : ''} from your favorites? This action cannot be undone.`}
+        icon={Trash2}
+        iconBgColor="bg-red-100"
+        iconColor="text-red-600"
+        primaryAction={{
+          label: "Clear Favorites",
+          onClick: handleConfirmClearFavorites,
+          className: "bg-red-500 text-white hover:bg-red-600"
+        }}
+        secondaryAction={{
+          label: "Cancel"
+        }}
+      />
     </div>
   );
 };

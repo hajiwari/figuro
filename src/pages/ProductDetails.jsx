@@ -5,6 +5,7 @@ import { Heart, ShoppingCart, Star, Plus, Minus, Share2, Truck, Shield, RefreshC
 import { useCart } from '../context/CartContext';
 import { useFavorites } from '../context/FavoritesContext';
 import ProductCard from '../components/ProductCard';
+import Dialog from '../components/Dialog';
 import { formatPrice, calculateSavings } from '../utils/priceUtils';
 
 const ProductDetails = () => {
@@ -15,17 +16,19 @@ const ProductDetails = () => {
   const [activeTab, setActiveTab] = useState('description');
   const [loading, setLoading] = useState(true);
   const [showZoom, setShowZoom] = useState(false);
+  const [showAlreadyInCartDialog, setShowAlreadyInCartDialog] = useState(false);
   
   const { addItem, isInCart } = useCart();
   const { toggleFavorite, isFavorite } = useFavorites();
 
-  // Complete product database
+  // Complete product database - synced with ProductList.jsx
   const allProducts = [
     {
       id: 1,
       name: "Demon Slayer Tanjiro Kamado Figure",
       brand: "Good Smile Company",
-      description: "This highly detailed figure showcases Tanjiro Kamado from the popular anime series Demon Slayer. Crafted with exceptional attention to detail, this figure captures Tanjiro's determined expression and iconic checkered haori pattern perfectly. Made with premium PVC materials and painted with care, this collectible is a must-have for any Demon Slayer fan.",
+      franchise: "Demon Slayer",
+      description: "High-quality PVC figure with detailed sculpting and vibrant colors",
       price: 4999,
       originalPrice: 5999,
       images: [
@@ -34,6 +37,7 @@ const ProductDetails = () => {
         "https://otakuhobbitoysph.com/cdn/shop/files/1-56_42841355-65a4-4f83-984a-4eb71910a25b.jpg",
         "https://otakuhobbitoysph.com/cdn/shop/files/1-56_42841355-65a4-4f83-984a-4eb71910a25b.jpg"
       ],
+      image: "https://otakuhobbitoysph.com/cdn/shop/files/1-56_42841355-65a4-4f83-984a-4eb71910a25b.jpg",
       rating: 4.8,
       reviewCount: 124,
       stock: 15,
@@ -65,7 +69,8 @@ const ProductDetails = () => {
       id: 2,
       name: "Attack on Titan Eren Yeager",
       brand: "Kotobukiya",
-      description: "Premium collectible figure with interchangeable parts featuring Eren Yeager from Attack on Titan. This exceptional figure captures Eren's intense determination and features multiple display options.",
+      franchise: "Attack on Titan",
+      description: "Premium collectible figure with interchangeable parts",
       price: 7199,
       images: [
         "https://hubbytetoystore.com/cdn/shop/products/PP960_eren_repkg_01.jpg",
@@ -73,6 +78,7 @@ const ProductDetails = () => {
         "https://hubbytetoystore.com/cdn/shop/products/PP960_eren_repkg_01.jpg",
         "https://hubbytetoystore.com/cdn/shop/products/PP960_eren_repkg_01.jpg"
       ],
+      image: "https://hubbytetoystore.com/cdn/shop/products/PP960_eren_repkg_01.jpg",
       rating: 4.9,
       reviewCount: 89,
       stock: 8,
@@ -101,16 +107,18 @@ const ProductDetails = () => {
     },
     {
       id: 3,
-      name: "Naruto Uzumaki Sage Mode",
+      name: "S.H.Figuarts Naruto Shippuden Uzumaki Naruto Sage Mode",
       brand: "Banpresto",
-      description: "Detailed figure featuring Naruto in his iconic Sage Mode. This figure perfectly captures the power and determination of the legendary ninja in his most powerful form.",
+      franchise: "Naruto",
+      description: "Detailed figure featuring Naruto in his iconic Sage Mode",
       price: 3899,
       images: [
-        "https://static.wikia.nocookie.net/naruto/images/d/dd/Naruto_Part_II.png",
-        "https://static.wikia.nocookie.net/naruto/images/d/dd/Naruto_Part_II.png",
-        "https://static.wikia.nocookie.net/naruto/images/d/dd/Naruto_Part_II.png",
-        "https://static.wikia.nocookie.net/naruto/images/d/dd/Naruto_Part_II.png"
+        "https://hyper-toys.com/shop/s-h-figuarts-naruto-shippuden-uzumaki-naruto-sage-mode-savior-of-konoha/",
+        "https://hyper-toys.com/shop/s-h-figuarts-naruto-shippuden-uzumaki-naruto-sage-mode-savior-of-konoha/",
+        "https://hyper-toys.com/shop/s-h-figuarts-naruto-shippuden-uzumaki-naruto-sage-mode-savior-of-konoha/",
+        "https://hyper-toys.com/shop/s-h-figuarts-naruto-shippuden-uzumaki-naruto-sage-mode-savior-of-konoha/"
       ],
+      image: "https://hyper-toys.com/shop/s-h-figuarts-naruto-shippuden-uzumaki-naruto-sage-mode-savior-of-konoha/",
       rating: 4.7,
       reviewCount: 156,
       stock: 22,
@@ -139,16 +147,18 @@ const ProductDetails = () => {
     },
     {
       id: 4,
-      name: "One Piece Monkey D. Luffy",
+      name: "Portrait of Pirates One Piece Monkey D. Luffy",
       brand: "Megahouse",
-      description: "Portrait of Pirates series with exceptional attention to detail. This Luffy figure showcases the Straw Hat Captain in all his glory with incredible attention to detail.",
+      franchise: "One Piece",
+      description: "Portrait of Pirates series with exceptional attention to detail",
       price: 8299,
       images: [
-        "https://static.wikia.nocookie.net/onepiece/images/6/6d/Monkey_D._Luffy_Anime_Post_Timeskip_Infobox.png",
-        "https://static.wikia.nocookie.net/onepiece/images/6/6d/Monkey_D._Luffy_Anime_Post_Timeskip_Infobox.png",
-        "https://static.wikia.nocookie.net/onepiece/images/6/6d/Monkey_D._Luffy_Anime_Post_Timeskip_Infobox.png",
-        "https://static.wikia.nocookie.net/onepiece/images/6/6d/Monkey_D._Luffy_Anime_Post_Timeskip_Infobox.png"
+        "https://m.media-amazon.com/images/I/61La4QK5NXL._AC_SX679_.jpg",
+        "https://m.media-amazon.com/images/I/61La4QK5NXL._AC_SX679_.jpg",
+        "https://m.media-amazon.com/images/I/61La4QK5NXL._AC_SX679_.jpg",
+        "https://m.media-amazon.com/images/I/61La4QK5NXL._AC_SX679_.jpg"
       ],
+      image: "https://m.media-amazon.com/images/I/61La4QK5NXL._AC_SX679_.jpg",
       rating: 4.9,
       reviewCount: 203,
       stock: 5,
@@ -177,16 +187,18 @@ const ProductDetails = () => {
     },
     {
       id: 5,
-      name: "Marvel Spider-Man Action Figure",
+      name: "Hot Toys Spider-Man Advanced Suit Figure",
       brand: "Hot Toys",
-      description: "Movie-accurate Spider-Man figure with web accessories. This premium collectible features incredible detail and movie-accurate styling.",
+      franchise: "Marvel",
+      description: "Movie-accurate Spider-Man figure with web accessories",
       price: 16599,
       images: [
-        "https://static.wikia.nocookie.net/spidermanps4/images/1/1c/Spider-Man_PS4_Classic_Suit.png",
-        "https://static.wikia.nocookie.net/spidermanps4/images/1/1c/Spider-Man_PS4_Classic_Suit.png",
-        "https://static.wikia.nocookie.net/spidermanps4/images/1/1c/Spider-Man_PS4_Classic_Suit.png",
-        "https://static.wikia.nocookie.net/spidermanps4/images/1/1c/Spider-Man_PS4_Classic_Suit.png"
+        "https://popcollectibles.store/cdn/shop/files/464276671_954218806742132_8335042455641682387_n_1200x1200.jpg?v=1729597356",
+        "https://popcollectibles.store/cdn/shop/files/464276671_954218806742132_8335042455641682387_n_1200x1200.jpg?v=1729597356",
+        "https://popcollectibles.store/cdn/shop/files/464276671_954218806742132_8335042455641682387_n_1200x1200.jpg?v=1729597356",
+        "https://popcollectibles.store/cdn/shop/files/464276671_954218806742132_8335042455641682387_n_1200x1200.jpg?v=1729597356"
       ],
+      image: "https://popcollectibles.store/cdn/shop/files/464276671_954218806742132_8335042455641682387_n_1200x1200.jpg?v=1729597356",
       rating: 4.8,
       reviewCount: 67,
       stock: 12,
@@ -199,25 +211,26 @@ const ProductDetails = () => {
       character: "Spider-Man",
       releaseDate: "August 2023",
       category: "action",
-      sku: "HT-MAR-SPI-001",
-      barcode: "4897011186542",
+      sku: "HT-MAR-SPD-001",
+      barcode: "4897011186394",
       isNew: false,
       onSale: false,
       isLimited: false,
       features: [
         "Movie-accurate design",
         "Web accessories included",
-        "Articulated figure",
-        "Premium materials",
-        "Hot Toys quality",
-        "Detailed costume"
+        "Premium fabric costume",
+        "Articulated joints",
+        "Multiple hand options",
+        "Display stand included"
       ]
     },
     {
       id: 6,
       name: "Dragon Ball Z Goku Super Saiyan",
       brand: "Bandai",
-      description: "Highly detailed Goku figure in Super Saiyan form. This iconic figure captures the legendary warrior in his most famous transformation.",
+      franchise: "Dragon Ball",
+      description: "Highly detailed Goku figure in Super Saiyan form",
       price: 4399,
       originalPrice: 5499,
       images: [
@@ -226,44 +239,47 @@ const ProductDetails = () => {
         "https://m.media-amazon.com/images/I/618yACswqgL._UF894,1000_QL80_.jpg",
         "https://m.media-amazon.com/images/I/618yACswqgL._UF894,1000_QL80_.jpg"
       ],
+      image: "https://m.media-amazon.com/images/I/618yACswqgL._UF894,1000_QL80_.jpg",
       rating: 4.6,
       reviewCount: 234,
       stock: 18,
       scale: "1/8",
       height: "22cm",
       weight: "320g",
-      material: "PVC, ABS",
+      material: "PVC",
       manufacturer: "Bandai",
       series: "Dragon Ball Z",
-      character: "Son Goku",
+      character: "Goku",
       releaseDate: "July 2023",
       category: "anime",
       sku: "BAN-DBZ-GOK-001",
-      barcode: "4549660312789",
+      barcode: "4549660314578",
       isNew: false,
       onSale: true,
       isLimited: false,
       features: [
         "Super Saiyan transformation",
         "Dynamic pose",
-        "High-quality sculpting",
-        "Official Bandai product",
-        "Iconic character design",
-        "Collector's favorite"
+        "Detailed hair sculpting",
+        "Energy effects included",
+        "Official Bandai quality",
+        "Perfect for display"
       ]
     },
     {
       id: 7,
-      name: "Pokemon Pikachu Nendoroid",
+      name: "Nendoroid Pokemon Pikachu",
       brand: "Good Smile Company",
-      description: "Adorable Pikachu with multiple expressions and accessories. This cute Nendoroid brings the beloved Pokemon to life with interchangeable parts.",
+      franchise: "Pokemon",
+      description: "Adorable Pikachu with multiple expressions and accessories",
       price: 3049,
       images: [
-        "https://static.wikia.nocookie.net/pokemon/images/0/0d/025Pikachu.png",
-        "https://static.wikia.nocookie.net/pokemon/images/0/0d/025Pikachu.png",
-        "https://static.wikia.nocookie.net/pokemon/images/0/0d/025Pikachu.png",
-        "https://static.wikia.nocookie.net/pokemon/images/0/0d/025Pikachu.png"
+        "https://images.bigbadtoystore.com/images/p/full/2017/07/29081bae-acbf-4479-a15e-742a1dfdd8d6.jpg",
+        "https://images.bigbadtoystore.com/images/p/full/2017/07/29081bae-acbf-4479-a15e-742a1dfdd8d6.jpg",
+        "https://images.bigbadtoystore.com/images/p/full/2017/07/29081bae-acbf-4479-a15e-742a1dfdd8d6.jpg",
+        "https://images.bigbadtoystore.com/images/p/full/2017/07/29081bae-acbf-4479-a15e-742a1dfdd8d6.jpg"
       ],
+      image: "https://images.bigbadtoystore.com/images/p/full/2017/07/29081bae-acbf-4479-a15e-742a1dfdd8d6.jpg",
       rating: 4.5,
       reviewCount: 312,
       stock: 25,
@@ -277,24 +293,25 @@ const ProductDetails = () => {
       releaseDate: "June 2023",
       category: "collectibles",
       sku: "GSC-POK-PIK-001",
-      barcode: "4580416906234",
+      barcode: "4580416906685",
       isNew: true,
       onSale: false,
       isLimited: false,
       features: [
         "Multiple expressions",
-        "Interchangeable accessories",
-        "Nendoroid series",
-        "Cute design",
-        "High-quality materials",
-        "Perfect for collectors"
+        "Interchangeable parts",
+        "Adorable design",
+        "High-quality Nendoroid",
+        "Perfect for collectors",
+        "Accessories included"
       ]
     },
     {
       id: 8,
       name: "Batman Dark Knight Figure",
       brand: "Queen Studios",
-      description: "Premium statue with incredible detail and craftsmanship. This Batman figure represents the pinnacle of collectible craftsmanship from The Dark Knight trilogy.",
+      franchise: "DC Comics",
+      description: "Premium statue with incredible detail and craftsmanship",
       price: 22199,
       images: [
         "https://hubbytetoystore.com/cdn/shop/products/07_ec7d24de-57d7-4727-8c15-473128dfd787.jpg",
@@ -302,12 +319,13 @@ const ProductDetails = () => {
         "https://hubbytetoystore.com/cdn/shop/products/07_ec7d24de-57d7-4727-8c15-473128dfd787.jpg",
         "https://hubbytetoystore.com/cdn/shop/products/07_ec7d24de-57d7-4727-8c15-473128dfd787.jpg"
       ],
+      image: "https://hubbytetoystore.com/cdn/shop/products/07_ec7d24de-57d7-4727-8c15-473128dfd787.jpg",
       rating: 4.9,
       reviewCount: 45,
       stock: 3,
       scale: "1/3",
       height: "45cm",
-      weight: "1200g",
+      weight: "2500g",
       material: "Polystone, Fabric",
       manufacturer: "Queen Studios",
       series: "DC Comics",
@@ -315,38 +333,40 @@ const ProductDetails = () => {
       releaseDate: "May 2023",
       category: "action",
       sku: "QS-DC-BAT-001",
-      barcode: "747720230156",
+      barcode: "6971272630147",
       isNew: false,
       onSale: false,
       isLimited: true,
       features: [
-        "Premium statue quality",
+        "Museum quality craftsmanship",
         "Incredible detail",
+        "Premium materials",
         "Limited edition",
-        "Museum-grade materials",
-        "Queen Studios quality",
-        "Collector's masterpiece"
+        "Collector's piece",
+        "Certificate of authenticity"
       ]
     },
     {
       id: 9,
-      name: "Final Fantasy Cloud Strife",
+      name: "Final Fantasy VII Remake Cloud Strife Figure",
       brand: "Square Enix",
-      description: "Iconic Cloud figure with Buster Sword and detailed armor. This figure brings the legendary SOLDIER to life with incredible attention to detail.",
+      franchise: "Final Fantasy",
+      description: "Iconic Cloud figure with Buster Sword and detailed armor",
       price: 10549,
       originalPrice: 12199,
       images: [
-        "https://static.wikia.nocookie.net/finalfantasy/images/1/1a/Cloud_Strife_from_FFVII_Remake_render.png",
-        "https://static.wikia.nocookie.net/finalfantasy/images/1/1a/Cloud_Strife_from_FFVII_Remake_render.png",
-        "https://static.wikia.nocookie.net/finalfantasy/images/1/1a/Cloud_Strife_from_FFVII_Remake_render.png",
-        "https://static.wikia.nocookie.net/finalfantasy/images/1/1a/Cloud_Strife_from_FFVII_Remake_render.png"
+        "https://img.oggettifantastici.com/2025/01/x_sqexff07zz379.jpg",
+        "https://img.oggettifantastici.com/2025/01/x_sqexff07zz379.jpg",
+        "https://img.oggettifantastici.com/2025/01/x_sqexff07zz379.jpg",
+        "https://img.oggettifantastici.com/2025/01/x_sqexff07zz379.jpg"
       ],
+      image: "https://img.oggettifantastici.com/2025/01/x_sqexff07zz379.jpg",
       rating: 4.7,
       reviewCount: 98,
       stock: 7,
       scale: "1/7",
       height: "28cm",
-      weight: "450g",
+      weight: "650g",
       material: "PVC, ABS",
       manufacturer: "Square Enix",
       series: "Final Fantasy VII",
@@ -354,37 +374,39 @@ const ProductDetails = () => {
       releaseDate: "April 2023",
       category: "gaming",
       sku: "SE-FF7-CLD-001",
-      barcode: "4988601343021",
+      barcode: "4988601343989",
       isNew: false,
       onSale: true,
       isLimited: false,
       features: [
         "Buster Sword included",
         "Detailed armor",
-        "Official Square Enix",
         "High-quality sculpting",
-        "Gaming icon",
-        "Premium collectible"
+        "Official Square Enix",
+        "Gaming collectible",
+        "Display base included"
       ]
     },
     {
       id: 10,
-      name: "Sailor Moon Eternal Figure",
+      name: "Figuarts ZERO Sailor Moon Eternal",
       brand: "Bandai",
-      description: "Beautiful Sailor Moon figure in her Eternal form. This elegant figure captures the magical girl in her most powerful transformation.",
+      franchise: "Sailor Moon",
+      description: "Beautiful Sailor Moon figure in her Eternal form",
       price: 6649,
       images: [
-        "https://static.wikia.nocookie.net/sailormoon/images/f/fc/Sailor_Moon_Eternal.png",
-        "https://static.wikia.nocookie.net/sailormoon/images/f/fc/Sailor_Moon_Eternal.png",
-        "https://static.wikia.nocookie.net/sailormoon/images/f/fc/Sailor_Moon_Eternal.png",
-        "https://static.wikia.nocookie.net/sailormoon/images/f/fc/Sailor_Moon_Eternal.png"
+        "https://tamashiiweb.com/images/item/item_0000013875_LfYgq7nz_01.jpg",
+        "https://tamashiiweb.com/images/item/item_0000013875_LfYgq7nz_01.jpg",
+        "https://tamashiiweb.com/images/item/item_0000013875_LfYgq7nz_01.jpg",
+        "https://tamashiiweb.com/images/item/item_0000013875_LfYgq7nz_01.jpg"
       ],
+      image: "https://tamashiiweb.com/images/item/item_0000013875_LfYgq7nz_01.jpg",
       rating: 4.8,
       reviewCount: 167,
       stock: 11,
       scale: "1/8",
       height: "25cm",
-      weight: "370g",
+      weight: "400g",
       material: "PVC, ABS",
       manufacturer: "Bandai",
       series: "Sailor Moon",
@@ -392,76 +414,80 @@ const ProductDetails = () => {
       releaseDate: "March 2023",
       category: "anime",
       sku: "BAN-SM-ETR-001",
-      barcode: "4549660423156",
+      barcode: "4573102615893",
       isNew: true,
       onSale: false,
       isLimited: false,
       features: [
         "Eternal form design",
         "Beautiful sculpting",
-        "Premium materials",
-        "Official Bandai quality",
-        "Magical girl icon",
-        "Collector's favorite"
+        "Detailed costume",
+        "Figuarts ZERO quality",
+        "Perfect for display",
+        "Official Bandai product"
       ]
     },
     {
       id: 11,
-      name: "Iron Man Mark 85 Diecast",
+      name: "Hot Toys Iron Man Mark 85 Diecast",
       brand: "Hot Toys",
-      description: "Premium diecast figure with LED features and accessories. This high-end collectible features incredible detail and electronic components.",
+      franchise: "Marvel",
+      description: "Premium diecast figure with LED features and accessories",
       price: 24949,
       images: [
-        "https://static.wikia.nocookie.net/marveldatabase/images/0/06/Iron_Man_Armor_Model_85_from_Marvel_Database.png",
-        "https://static.wikia.nocookie.net/marveldatabase/images/0/06/Iron_Man_Armor_Model_85_from_Marvel_Database.png",
-        "https://static.wikia.nocookie.net/marveldatabase/images/0/06/Iron_Man_Armor_Model_85_from_Marvel_Database.png",
-        "https://static.wikia.nocookie.net/marveldatabase/images/0/06/Iron_Man_Armor_Model_85_from_Marvel_Database.png"
+        "https://i.pinimg.com/736x/08/04/19/08041945ce7639185169aadbaca33a16.jpg",
+        "https://i.pinimg.com/736x/08/04/19/08041945ce7639185169aadbaca33a16.jpg",
+        "https://i.pinimg.com/736x/08/04/19/08041945ce7639185169aadbaca33a16.jpg",
+        "https://i.pinimg.com/736x/08/04/19/08041945ce7639185169aadbaca33a16.jpg"
       ],
+      image: "https://i.pinimg.com/736x/08/04/19/08041945ce7639185169aadbaca33a16.jpg",
       rating: 4.9,
       reviewCount: 78,
       stock: 4,
       scale: "1/6",
       height: "32cm",
-      weight: "1100g",
-      material: "Diecast, PVC, LED",
+      weight: "1200g",
+      material: "Diecast, PVC, Fabric",
       manufacturer: "Hot Toys",
       series: "Marvel",
       character: "Iron Man",
       releaseDate: "February 2023",
       category: "action",
       sku: "HT-MAR-IM85-001",
-      barcode: "4897011186789",
+      barcode: "4897011186486",
       isNew: false,
       onSale: false,
       isLimited: true,
       features: [
-        "Diecast construction",
         "LED light features",
+        "Diecast construction",
         "Premium accessories",
         "Movie-accurate design",
-        "Hot Toys masterpiece",
-        "Electronic components"
+        "Limited edition",
+        "Certificate included"
       ]
     },
     {
       id: 12,
-      name: "Hatsune Miku Racing Ver.",
+      name: "Good Smile Racing Hatsune Miku 2019 Ver.",
       brand: "Good Smile Company",
-      description: "Special racing version of the popular virtual singer. This unique figure features Miku in her racing outfit with dynamic styling.",
+      franchise: "Vocaloid",
+      description: "Special racing version of the popular virtual singer",
       price: 7749,
       originalPrice: 8849,
       images: [
-        "https://static.wikia.nocookie.net/vocaloid/images/c/cd/Hatsune_Miku_V4X.png",
-        "https://static.wikia.nocookie.net/vocaloid/images/c/cd/Hatsune_Miku_V4X.png",
-        "https://static.wikia.nocookie.net/vocaloid/images/c/cd/Hatsune_Miku_V4X.png",
-        "https://static.wikia.nocookie.net/vocaloid/images/c/cd/Hatsune_Miku_V4X.png"
+        "https://www.goodsmile.com/gsc-webrevo-sdk-storage-prd/product/image/36455/nz9XrQND4gYt86pVsHGULdSM0weCAhvT.jpg",
+        "https://www.goodsmile.com/gsc-webrevo-sdk-storage-prd/product/image/36455/nz9XrQND4gYt86pVsHGULdSM0weCAhvT.jpg",
+        "https://www.goodsmile.com/gsc-webrevo-sdk-storage-prd/product/image/36455/nz9XrQND4gYt86pVsHGULdSM0weCAhvT.jpg",
+        "https://www.goodsmile.com/gsc-webrevo-sdk-storage-prd/product/image/36455/nz9XrQND4gYt86pVsHGULdSM0weCAhvT.jpg"
       ],
+      image: "https://www.goodsmile.com/gsc-webrevo-sdk-storage-prd/product/image/36455/nz9XrQND4gYt86pVsHGULdSM0weCAhvT.jpg",
       rating: 4.6,
       reviewCount: 145,
       stock: 9,
       scale: "1/8",
       height: "23cm",
-      weight: "340g",
+      weight: "370g",
       material: "PVC, ABS",
       manufacturer: "Good Smile Company",
       series: "Vocaloid",
@@ -469,17 +495,17 @@ const ProductDetails = () => {
       releaseDate: "January 2023",
       category: "anime",
       sku: "GSC-VOC-MIK-001",
-      barcode: "4580416906891",
+      barcode: "4580416906777",
       isNew: false,
       onSale: true,
       isLimited: false,
       features: [
-        "Racing outfit design",
-        "Dynamic pose",
-        "Special version",
-        "High-quality materials",
-        "Vocaloid icon",
-        "Limited racing theme"
+        "Racing theme design",
+        "Special 2019 version",
+        "High-quality sculpting",
+        "Good Smile Racing",
+        "Collectible item",
+        "Display stand included"
       ]
     }
   ];
@@ -604,9 +630,21 @@ const ProductDetails = () => {
   }, [id]);
 
   const handleAddToCart = () => {
+    if (isInCart(product.id)) {
+      setShowAlreadyInCartDialog(true);
+      return;
+    }
+    
     for (let i = 0; i < quantity; i++) {
       addItem(product);
     }
+  };
+
+  const handleConfirmAddToCart = () => {
+    for (let i = 0; i < quantity; i++) {
+      addItem(product);
+    }
+    setShowAlreadyInCartDialog(false);
   };
 
   const handleQuantityChange = (change) => {
@@ -1172,6 +1210,25 @@ const ProductDetails = () => {
           </button>
         </div>
       </div>
+
+      {/* Already in Cart Dialog */}
+      <Dialog
+        isOpen={showAlreadyInCartDialog}
+        onClose={() => setShowAlreadyInCartDialog(false)}
+        title="Already in Cart"
+        description={`This item is already in your cart. Would you like to add ${quantity} more?`}
+        icon={ShoppingCart}
+        iconBgColor="bg-yellow-100"
+        iconColor="text-yellow-600"
+        primaryAction={{
+          label: `Add ${quantity} More`,
+          onClick: handleConfirmAddToCart,
+          className: "bg-yellow-500 text-black hover:bg-yellow-400"
+        }}
+        secondaryAction={{
+          label: "Cancel"
+        }}
+      />
     </div>
   );
 };

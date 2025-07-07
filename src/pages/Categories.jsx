@@ -8,42 +8,42 @@ const Categories = () => {
     {
       name: "Anime Figures",
       slug: "anime",
-      image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=300&fit=crop",
+      image: "https://mrwallpaper.com/images/high/demon-slayer-anime-figures-2now37a0ly211xg1.jpg",
       count: "500+ Items",
       description: "Premium anime figures from your favorite series including Demon Slayer, Attack on Titan, and more"
     },
     {
       name: "Action Figures",
       slug: "action",
-      image: "https://images.unsplash.com/photo-1601814933824-fd0b574dd592?w=400&h=300&fit=crop",
+      image: "https://images.squarespace-cdn.com/content/v1/51b3dc8ee4b051b96ceb10de/cae311df-3ffb-49cb-8f29-c3b0933509a1/hot-toys-deadpool-wolverine-figures-feature-lady-pool-shirtless-wolverine-and-more.jpg",
       count: "300+ Items",
       description: "High-quality action figures from movies, comics, and TV shows"
     },
     {
       name: "Collectibles",
       slug: "collectibles",
-      image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=300&fit=crop",
+      image: "https://cdn.shopify.com/s/files/1/0013/6105/1705/files/Ranked_The_Top_7_Best_Action_Figure_Brands_for_Collectors.jpg?v=1713425120",
       count: "200+ Items",
       description: "Rare and unique collectible figures for serious collectors"
     },
     {
       name: "Gaming Figures",
       slug: "gaming",
-      image: "https://images.unsplash.com/photo-1601814933824-fd0b574dd592?w=400&h=300&fit=crop",
+      image: "https://wallpapers.com/images/hd/mass-effect-female-characters-4k-ks6bm2env8skz4xf.jpg",
       count: "150+ Items",
       description: "Gaming characters from popular video games and franchises"
     },
     {
       name: "Limited Edition",
       slug: "limited",
-      image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=300&fit=crop",
+      image: "https://images.bigbadtoystore.com/images/p/full/2025/05/46b94f43-1cd3-4c5d-8c38-67e31c963e2c.jpg",
       count: "50+ Items",
       description: "Exclusive limited edition figures with numbered certificates"
     },
     {
       name: "Nendoroids",
       slug: "nendoroid",
-      image: "https://images.unsplash.com/photo-1601814933824-fd0b574dd592?w=400&h=300&fit=crop",
+      image: "https://i.pinimg.com/736x/f0/47/15/f047158c610643d1063d455352656562.jpg",
       count: "100+ Items",
       description: "Cute chibi-style figures with interchangeable parts and accessories"
     }

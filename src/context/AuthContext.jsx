@@ -32,33 +32,38 @@ export const AuthProvider = ({ children }) => {
       const result = await createUserWithEmailAndPassword(auth, email, password);
       await updateProfile(result.user, { displayName });
       
-      // Create user document in Firestore
-      await setDoc(doc(db, 'users', result.user.uid), {
-        email: email,
-        displayName: displayName,
-        phone: '',
-        address: {
-          street: '',
-          city: '',
-          state: '',
-          zipCode: '',
-          country: ''
-        },
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-      });
-      
-      // Initialize empty cart for the user
-      await setDoc(doc(db, 'carts', result.user.uid), {
-        items: [],
-        updatedAt: new Date().toISOString()
-      });
-      
-      // Initialize empty favorites for the user
-      await setDoc(doc(db, 'favorites', result.user.uid), {
-        items: [],
-        updatedAt: new Date().toISOString()
-      });
+      // Try to create user document in Firestore - don't fail signup if this fails
+      try {
+        await setDoc(doc(db, 'users', result.user.uid), {
+          email: email,
+          displayName: displayName,
+          phone: '',
+          address: {
+            street: '',
+            city: '',
+            state: '',
+            zipCode: '',
+            country: ''
+          },
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        });
+        
+        // Initialize empty cart for the user
+        await setDoc(doc(db, 'carts', result.user.uid), {
+          items: [],
+          updatedAt: new Date().toISOString()
+        });
+        
+        // Initialize empty favorites for the user
+        await setDoc(doc(db, 'favorites', result.user.uid), {
+          items: [],
+          updatedAt: new Date().toISOString()
+        });
+      } catch (firestoreError) {
+        console.warn('Firestore operations failed during signup (user account still created):', firestoreError);
+        // Don't throw here - user account was successfully created
+      }
       
       return result;
     } catch (error) {

@@ -1,6 +1,6 @@
 // src/context/CartContext.jsx
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
-import { doc, setDoc, getDoc, onSnapshot } from 'firebase/firestore';
+import { doc, setDoc, onSnapshot } from 'firebase/firestore';
 import { db } from '../services/firebase';
 import { useAuth } from './AuthContext';
 

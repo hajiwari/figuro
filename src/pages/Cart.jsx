@@ -5,6 +5,7 @@ import { Plus, Minus, Trash2, ShoppingBag, ArrowRight, Tag, Truck } from 'lucide
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import { formatPrice } from '../utils/priceUtils';
+import Dialog from '../components/Dialog';
 
 const Cart = () => {
   const { items, updateQuantity, removeItem, getTotalPrice, clearCart } = useCart();
@@ -13,6 +14,9 @@ const Cart = () => {
   const [promoCode, setPromoCode] = useState('');
   const [appliedPromo, setAppliedPromo] = useState(null);
   const [isCheckingOut, setIsCheckingOut] = useState(false);
+  const [showClearCartDialog, setShowClearCartDialog] = useState(false);
+  const [showRemoveItemDialog, setShowRemoveItemDialog] = useState(false);
+  const [itemToRemove, setItemToRemove] = useState(null);
 
   const subtotal = getTotalPrice();
   const shipping = subtotal > 4000 ? 0 : 200; // Free shipping over ₱4,000
@@ -22,10 +26,33 @@ const Cart = () => {
 
   const handleQuantityChange = (itemId, newQuantity) => {
     if (newQuantity === 0) {
-      removeItem(itemId);
+      setItemToRemove({ id: itemId, name: items.find(item => item.id === itemId)?.name });
+      setShowRemoveItemDialog(true);
     } else {
       updateQuantity(itemId, newQuantity);
     }
+  };
+
+  const handleRemoveItem = (itemId, itemName) => {
+    setItemToRemove({ id: itemId, name: itemName });
+    setShowRemoveItemDialog(true);
+  };
+
+  const handleConfirmRemoveItem = () => {
+    if (itemToRemove) {
+      removeItem(itemToRemove.id);
+      setShowRemoveItemDialog(false);
+      setItemToRemove(null);
+    }
+  };
+
+  const handleClearCart = () => {
+    setShowClearCartDialog(true);
+  };
+
+  const handleConfirmClearCart = () => {
+    clearCart();
+    setShowClearCartDialog(false);
   };
 
   const handleApplyPromo = () => {
@@ -70,7 +97,7 @@ const Cart = () => {
             </p>
             <Link
               to="/products"
-              className="bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors inline-flex items-center"
+              className="bg-yellow-500 text-white px-8 py-3 rounded-lg font-semibold hover:bg-yellow-600 transition-colors inline-flex items-center"
             >
               Continue Shopping
               <ArrowRight className="ml-2 h-5 w-5" />
@@ -87,8 +114,8 @@ const Cart = () => {
         <div className="flex items-center justify-between mb-8">
           <h1 className="text-3xl font-bold text-gray-900">Shopping Cart</h1>
           <button
-            onClick={clearCart}
-            className="text-red-600 hover:text-red-800 text-sm font-medium"
+            onClick={handleClearCart}
+            className="bg-red-100 text-red-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-red-200 hover:text-red-800 transition-colors border border-red-200"
           >
             Clear Cart
           </button>
@@ -129,19 +156,19 @@ const Cart = () => {
                     </div>
 
                     <div className="flex items-center space-x-3">
-                      <div className="flex items-center border border-gray-300 rounded-lg">
+                      <div className="flex items-center border border-gray-300 rounded-lg bg-white">
                         <button
                           onClick={() => handleQuantityChange(item.id, item.quantity - 1)}
-                          className="p-2 hover:bg-gray-100 rounded-l-lg"
+                          className="p-2 hover:bg-yellow-50 hover:text-yellow-600 rounded-l-lg transition-colors"
                         >
                           <Minus className="h-4 w-4" />
                         </button>
-                        <span className="px-4 py-2 border-x border-gray-300 min-w-[3rem] text-center">
+                        <span className="px-4 py-2 border-x border-gray-300 min-w-[3rem] text-center font-medium">
                           {item.quantity}
                         </span>
                         <button
                           onClick={() => handleQuantityChange(item.id, item.quantity + 1)}
-                          className="p-2 hover:bg-gray-100 rounded-r-lg"
+                          className="p-2 hover:bg-yellow-50 hover:text-yellow-600 rounded-r-lg transition-colors"
                         >
                           <Plus className="h-4 w-4" />
                         </button>
@@ -152,8 +179,8 @@ const Cart = () => {
                       </div>
 
                       <button
-                        onClick={() => removeItem(item.id)}
-                        className="p-2 text-red-600 hover:text-red-800 hover:bg-red-50 rounded-lg"
+                        onClick={() => handleRemoveItem(item.id, item.name)}
+                        className="p-2 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors border border-transparent hover:border-red-200"
                       >
                         <Trash2 className="h-5 w-5" />
                       </button>
@@ -167,7 +194,7 @@ const Cart = () => {
             <div className="mt-6">
               <Link
                 to="/products"
-                className="text-blue-600 hover:text-blue-800 font-medium inline-flex items-center"
+                className="text-yellow-500 hover:text-yellow-600 font-medium inline-flex items-center"
               >
                 ← Continue Shopping
               </Link>
@@ -195,7 +222,7 @@ const Cart = () => {
                   <button
                     onClick={handleApplyPromo}
                     disabled={!promoCode}
-                    className="bg-gray-100 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="bg-yellow-500 text-white px-4 py-2 rounded-md hover:bg-yellow-600 disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-gray-300 font-medium transition-colors"
                   >
                     Apply
                   </button>
@@ -262,7 +289,7 @@ const Cart = () => {
                 className={`w-full py-3 px-4 rounded-lg font-semibold transition-colors ${
                   isCheckingOut
                     ? 'bg-gray-400 cursor-not-allowed'
-                    : 'bg-blue-600 hover:bg-blue-700'
+                    : 'bg-green-600 hover:bg-green-700 shadow-md hover:shadow-lg'
                 } text-white`}
               >
                 {isCheckingOut ? (
@@ -281,7 +308,7 @@ const Cart = () => {
               {!currentUser && (
                 <p className="text-sm text-gray-600 text-center mt-3">
                   Already have an account?{' '}
-                  <Link to="/signin" className="text-blue-600 hover:text-blue-800">
+                  <Link to="/signin" className="text-yellow-500 hover:text-yellow-600 font-medium">
                     Sign in
                   </Link>
                 </p>
@@ -304,6 +331,43 @@ const Cart = () => {
           </div>
         </div>
       </div>
+
+      {/* Dialogs */}
+      <Dialog
+        isOpen={showRemoveItemDialog}
+        onClose={() => setShowRemoveItemDialog(false)}
+        title="Remove Item"
+        description={`Are you sure you want to remove "${itemToRemove?.name}" from your cart?`}
+        icon={Trash2}
+        iconBgColor="bg-red-100"
+        iconColor="text-red-600"
+        primaryAction={{
+          label: "Remove",
+          onClick: handleConfirmRemoveItem,
+          className: "bg-red-500 text-white hover:bg-red-600"
+        }}
+        secondaryAction={{
+          label: "Cancel"
+        }}
+      />
+
+      <Dialog
+        isOpen={showClearCartDialog}
+        onClose={() => setShowClearCartDialog(false)}
+        title="Clear Cart"
+        description={`Are you sure you want to remove all ${items.length} item${items.length !== 1 ? 's' : ''} from your cart? This action cannot be undone.`}
+        icon={Trash2}
+        iconBgColor="bg-red-100"
+        iconColor="text-red-600"
+        primaryAction={{
+          label: "Clear Cart",
+          onClick: handleConfirmClearCart,
+          className: "bg-red-500 text-white hover:bg-red-600"
+        }}
+        secondaryAction={{
+          label: "Cancel"
+        }}
+      />
     </div>
   );
 };

@@ -4,6 +4,154 @@ import { useSearchParams, useParams } from 'react-router-dom';
 import { Filter, Grid, List, SlidersHorizontal, X } from 'lucide-react';
 import ProductCard from '../components/ProductCard';
 
+// Sample products data
+const sampleProducts = [
+  {
+    id: 1,
+    name: "Demon Slayer Tanjiro Kamado Figure",
+    brand: "Good Smile Company",
+    price: 8500,
+    image: "https://otakuhobbytoys.ph/wp-content/uploads/2024/10/GSC-Tanjiro-Kamado-Figures-1-scaled.webp",
+    scale: "1/8",
+    category: "anime",
+    isNew: true,
+    onSale: false,
+    isLimited: false
+  },
+  {
+    id: 2,
+    name: "Attack on Titan Eren Yeager Figure",
+    brand: "Kotobukiya",
+    price: 12000,
+    image: "https://www.hubbytetoystore.com/cdn/shop/files/f9b56a5a-27bc-4c00-b4b1-e8cfef17c85a.jpg?v=1711606069&width=800",
+    scale: "1/7",
+    category: "anime",
+    isNew: false,
+    onSale: true,
+    isLimited: true
+  },
+  {
+    id: 3,
+    name: "Dragon Ball Z Goku Super Saiyan Figure",
+    brand: "Bandai",
+    price: 9500,
+    image: "https://m.media-amazon.com/images/I/81d3c8XLxGL._AC_SL1500_.jpg",
+    scale: "1/8",
+    category: "anime",
+    isNew: false,
+    onSale: false,
+    isLimited: false
+  },
+  {
+    id: 4,
+    name: "Spider-Man Miles Morales",
+    brand: "Hot Toys",
+    price: 15000,
+    image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+    scale: "1/6",
+    category: "action",
+    isNew: true,
+    onSale: false,
+    isLimited: false
+  },
+  {
+    id: 5,
+    name: "Wonder Woman 1984",
+    brand: "Sideshow",
+    price: 18000,
+    image: "https://images.unsplash.com/photo-1608889476561-6242cfdbf622?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+    scale: "1/4",
+    category: "action",
+    isNew: false,
+    onSale: true,
+    isLimited: true
+  },
+  {
+    id: 6,
+    name: "Batman Dark Knight",
+    brand: "Hot Toys",
+    price: 16500,
+    image: "https://images.unsplash.com/photo-1531259683007-016a7b628fc3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+    scale: "1/6",
+    category: "action",
+    isNew: false,
+    onSale: false,
+    isLimited: false
+  },
+  {
+    id: 7,
+    name: "Final Fantasy VII Cloud Strife",
+    brand: "Square Enix",
+    price: 14000,
+    image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+    scale: "1/7",
+    category: "gaming",
+    isNew: true,
+    onSale: false,
+    isLimited: false
+  },
+  {
+    id: 8,
+    name: "The Witcher 3 Geralt Figure",
+    brand: "Sideshow",
+    price: 13500,
+    image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+    scale: "1/6",
+    category: "gaming",
+    isNew: false,
+    onSale: true,
+    isLimited: false
+  },
+  {
+    id: 9,
+    name: "Halo Master Chief",
+    brand: "Sideshow",
+    price: 17000,
+    image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+    scale: "1/4",
+    category: "gaming",
+    isNew: false,
+    onSale: false,
+    isLimited: true
+  },
+  {
+    id: 10,
+    name: "Star Wars Darth Vader",
+    brand: "Hot Toys",
+    price: 19500,
+    image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+    scale: "1/6",
+    category: "collectibles",
+    isNew: true,
+    onSale: false,
+    isLimited: true
+  },
+  {
+    id: 11,
+    name: "Iron Man Mark 85",
+    brand: "Hot Toys",
+    price: 22000,
+    image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+    scale: "1/6",
+    category: "action",
+    isNew: false,
+    onSale: true,
+    isLimited: false
+  },
+  {
+    id: 12,
+    name: "Naruto Uzumaki Sage Mode",
+    brand: "Megahouse",
+    price: 11500,
+    image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+    scale: "1/8",
+    category: "anime",
+    isNew: false,
+    onSale: false,
+    isLimited: false
+  }
+];
+
 const ProductList = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const { category: urlCategory } = useParams();
@@ -15,6 +163,7 @@ const ProductList = () => {
   const [filters, setFilters] = useState({
     category: urlCategory || '',
     brand: '',
+    franchise: '',
     priceRange: '',
     scale: '',
     inStock: false,
@@ -28,6 +177,7 @@ const ProductList = () => {
       id: 1,
       name: "Demon Slayer Tanjiro Kamado Figure",
       brand: "Good Smile Company",
+      franchise: "Demon Slayer",
       description: "High-quality PVC figure with detailed sculpting and vibrant colors",
       price: 4999,
       originalPrice: 5999,
@@ -46,6 +196,7 @@ const ProductList = () => {
       id: 2,
       name: "Attack on Titan Eren Yeager",
       brand: "Kotobukiya",
+      franchise: "Attack on Titan",
       description: "Premium collectible figure with interchangeable parts",
       price: 7199,
       image: "https://hubbytetoystore.com/cdn/shop/products/PP960_eren_repkg_01.jpg",
@@ -61,11 +212,12 @@ const ProductList = () => {
     },
     {
       id: 3,
-      name: "Naruto Uzumaki Sage Mode",
+      name: "S.H.Figuarts Naruto Shippuden Uzumaki Naruto Sage Mode",
       brand: "Banpresto",
+      franchise: "Naruto",
       description: "Detailed figure featuring Naruto in his iconic Sage Mode",
       price: 3899,
-      image: "https://static.wikia.nocookie.net/naruto/images/d/dd/Naruto_Part_II.png",
+      image: "https://hyper-toys.com/shop/s-h-figuarts-naruto-shippuden-uzumaki-naruto-sage-mode-savior-of-konoha/",
       rating: 4.7,
       reviewCount: 156,
       stock: 22,
@@ -78,11 +230,12 @@ const ProductList = () => {
     },
     {
       id: 4,
-      name: "One Piece Monkey D. Luffy",
+      name: "Portrait of Pirates One Piece Monkey D. Luffy",
       brand: "Megahouse",
+      franchise: "One Piece",
       description: "Portrait of Pirates series with exceptional attention to detail",
       price: 8299,
-      image: "https://static.wikia.nocookie.net/onepiece/images/6/6d/Monkey_D._Luffy_Anime_Post_Timeskip_Infobox.png",
+      image: "https://m.media-amazon.com/images/I/61La4QK5NXL._AC_SX679_.jpg",
       rating: 4.9,
       reviewCount: 203,
       stock: 5,
@@ -95,11 +248,12 @@ const ProductList = () => {
     },
     {
       id: 5,
-      name: "Marvel Spider-Man Action Figure",
+      name: "Hot Toys Spider-Man Advanced Suit Figure",
       brand: "Hot Toys",
+      franchise: "Marvel",
       description: "Movie-accurate Spider-Man figure with web accessories",
       price: 16599,
-      image: "https://static.wikia.nocookie.net/spidermanps4/images/1/1c/Spider-Man_PS4_Classic_Suit.png",
+      image: "https://popcollectibles.store/cdn/shop/files/464276671_954218806742132_8335042455641682387_n_1200x1200.jpg?v=1729597356",
       rating: 4.8,
       reviewCount: 67,
       stock: 12,
@@ -114,6 +268,7 @@ const ProductList = () => {
       id: 6,
       name: "Dragon Ball Z Goku Super Saiyan",
       brand: "Bandai",
+      franchise: "Dragon Ball",
       description: "Highly detailed Goku figure in Super Saiyan form",
       price: 4399,
       originalPrice: 5499,
@@ -130,11 +285,12 @@ const ProductList = () => {
     },
     {
       id: 7,
-      name: "Pokemon Pikachu Nendoroid",
+      name: "Nendoroid Pokemon Pikachu",
       brand: "Good Smile Company",
+      franchise: "Pokemon",
       description: "Adorable Pikachu with multiple expressions and accessories",
       price: 3049,
-      image: "https://static.wikia.nocookie.net/pokemon/images/0/0d/025Pikachu.png",
+      image: "https://images.bigbadtoystore.com/images/p/full/2017/07/29081bae-acbf-4479-a15e-742a1dfdd8d6.jpg",
       rating: 4.5,
       reviewCount: 312,
       stock: 25,
@@ -149,6 +305,7 @@ const ProductList = () => {
       id: 8,
       name: "Batman Dark Knight Figure",
       brand: "Queen Studios",
+      franchise: "DC Comics",
       description: "Premium statue with incredible detail and craftsmanship",
       price: 22199,
       image: "https://hubbytetoystore.com/cdn/shop/products/07_ec7d24de-57d7-4727-8c15-473128dfd787.jpg",
@@ -164,12 +321,13 @@ const ProductList = () => {
     },
     {
       id: 9,
-      name: "Final Fantasy Cloud Strife",
+      name: "Final Fantasy VII Remake Cloud Strife Figure",
       brand: "Square Enix",
+      franchise: "Final Fantasy",
       description: "Iconic Cloud figure with Buster Sword and detailed armor",
       price: 10549,
       originalPrice: 12199,
-      image: "https://static.wikia.nocookie.net/finalfantasy/images/1/1a/Cloud_Strife_from_FFVII_Remake_render.png",
+      image: "https://img.oggettifantastici.com/2025/01/x_sqexff07zz379.jpg",
       rating: 4.7,
       reviewCount: 98,
       stock: 7,
@@ -182,11 +340,12 @@ const ProductList = () => {
     },
     {
       id: 10,
-      name: "Sailor Moon Eternal Figure",
+      name: "Figuarts ZERO Sailor Moon Eternal",
       brand: "Bandai",
+      franchise: "Sailor Moon",
       description: "Beautiful Sailor Moon figure in her Eternal form",
       price: 6649,
-      image: "https://static.wikia.nocookie.net/sailormoon/images/f/fc/Sailor_Moon_Eternal.png",
+      image: "https://tamashiiweb.com/images/item/item_0000013875_LfYgq7nz_01.jpg",
       rating: 4.8,
       reviewCount: 167,
       stock: 11,
@@ -199,11 +358,12 @@ const ProductList = () => {
     },
     {
       id: 11,
-      name: "Iron Man Mark 85 Diecast",
+      name: "Hot Toys Iron Man Mark 85 Diecast",
       brand: "Hot Toys",
+      franchise: "Marvel",
       description: "Premium diecast figure with LED features and accessories",
       price: 24949,
-      image: "https://static.wikia.nocookie.net/marveldatabase/images/0/06/Iron_Man_Armor_Model_85_from_Marvel_Database.png",
+      image: "https://i.pinimg.com/736x/08/04/19/08041945ce7639185169aadbaca33a16.jpg",
       rating: 4.9,
       reviewCount: 78,
       stock: 4,
@@ -216,12 +376,13 @@ const ProductList = () => {
     },
     {
       id: 12,
-      name: "Hatsune Miku Racing Ver.",
+      name: "Good Smile Racing Hatsune Miku 2019 Ver.",
       brand: "Good Smile Company",
+      franchise: "Vocaloid",
       description: "Special racing version of the popular virtual singer",
       price: 7749,
       originalPrice: 8849,
-      image: "https://static.wikia.nocookie.net/vocaloid/images/c/cd/Hatsune_Miku_V4X.png",
+      image: "https://www.goodsmile.com/gsc-webrevo-sdk-storage-prd/product/image/36455/nz9XrQND4gYt86pVsHGULdSM0weCAhvT.jpg",
       rating: 4.6,
       reviewCount: 145,
       stock: 9,
@@ -235,6 +396,7 @@ const ProductList = () => {
   ];
 
   const brands = ["Good Smile Company", "Kotobukiya", "Banpresto", "Megahouse", "Hot Toys", "Bandai", "Sideshow", "Square Enix"];
+  const franchises = ["Demon Slayer", "Attack on Titan", "Naruto", "One Piece", "Marvel", "Dragon Ball", "Pokemon", "DC Comics", "Final Fantasy", "Sailor Moon", "Vocaloid"];
   const scales = ["1/4", "1/6", "1/7", "1/8", "1/10", "1/12", "Nendoroid"];
   const categories = ["anime", "action", "collectibles", "gaming", "limited"];
 
@@ -266,6 +428,7 @@ const ProductList = () => {
       filtered = filtered.filter(product =>
         product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         product.brand.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        product.franchise?.toLowerCase().includes(searchQuery.toLowerCase()) ||
         product.description.toLowerCase().includes(searchQuery.toLowerCase())
       );
     }
@@ -278,6 +441,11 @@ const ProductList = () => {
     // Apply brand filter
     if (filters.brand) {
       filtered = filtered.filter(product => product.brand === filters.brand);
+    }
+
+    // Apply franchise filter
+    if (filters.franchise) {
+      filtered = filtered.filter(product => product.franchise === filters.franchise);
     }
 
     // Apply scale filter
@@ -340,6 +508,7 @@ const ProductList = () => {
     setFilters({
       category: '',
       brand: '',
+      franchise: '',
       priceRange: '',
       scale: '',
       inStock: false,
@@ -355,7 +524,7 @@ const ProductList = () => {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-yellow-400"></div>
       </div>
     );
   }
@@ -385,7 +554,7 @@ const ProductList = () => {
                 {activeFiltersCount > 0 && (
                   <button
                     onClick={clearFilters}
-                    className="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                    className="text-yellow-400 hover:text-yellow-500 text-sm font-medium"
                   >
                     Clear All ({activeFiltersCount})
                   </button>
@@ -400,7 +569,7 @@ const ProductList = () => {
                 <select
                   value={filters.category}
                   onChange={(e) => handleFilterChange('category', e.target.value)}
-                  className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400"
                 >
                   <option value="">All Categories</option>
                   {categories.map(category => (
@@ -419,11 +588,28 @@ const ProductList = () => {
                 <select
                   value={filters.brand}
                   onChange={(e) => handleFilterChange('brand', e.target.value)}
-                  className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400"
                 >
                   <option value="">All Brands</option>
                   {brands.map(brand => (
                     <option key={brand} value={brand}>{brand}</option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Franchise Filter */}
+              <div className="mb-6">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Franchise
+                </label>
+                <select
+                  value={filters.franchise}
+                  onChange={(e) => handleFilterChange('franchise', e.target.value)}
+                  className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400"
+                >
+                  <option value="">All Franchises</option>
+                  {franchises.map(franchise => (
+                    <option key={franchise} value={franchise}>{franchise}</option>
                   ))}
                 </select>
               </div>
@@ -436,7 +622,7 @@ const ProductList = () => {
                 <select
                   value={filters.priceRange}
                   onChange={(e) => handleFilterChange('priceRange', e.target.value)}
-                  className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400"
                 >
                   <option value="">All Prices</option>
                   <option value="0-2000">₱0 - ₱2,000</option>
@@ -456,7 +642,7 @@ const ProductList = () => {
                 <select
                   value={filters.scale}
                   onChange={(e) => handleFilterChange('scale', e.target.value)}
-                  className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400"
                 >
                   <option value="">All Scales</option>
                   {scales.map(scale => (
@@ -472,7 +658,7 @@ const ProductList = () => {
                     type="checkbox"
                     checked={filters.inStock}
                     onChange={(e) => handleFilterChange('inStock', e.target.checked)}
-                    className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                    className="rounded border-gray-300 text-yellow-600 focus:ring-yellow-400"
                   />
                   <span className="ml-2 text-sm text-gray-700">In Stock Only</span>
                 </label>
@@ -481,7 +667,7 @@ const ProductList = () => {
                     type="checkbox"
                     checked={filters.onSale}
                     onChange={(e) => handleFilterChange('onSale', e.target.checked)}
-                    className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                    className="rounded border-gray-300 text-yellow-600 focus:ring-yellow-400"
                   />
                   <span className="ml-2 text-sm text-gray-700">On Sale</span>
                 </label>
@@ -502,7 +688,7 @@ const ProductList = () => {
                     <SlidersHorizontal className="h-4 w-4" />
                     Filters
                     {activeFiltersCount > 0 && (
-                      <span className="bg-blue-600 text-white text-xs rounded-full px-2 py-1 ml-1">
+                      <span className="bg-yellow-400 text-black text-xs rounded-full px-2 py-1 ml-1">
                         {activeFiltersCount}
                       </span>
                     )}
@@ -511,13 +697,13 @@ const ProductList = () => {
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => setViewMode('grid')}
-                      className={`p-2 rounded-lg transition-colors ${viewMode === 'grid' ? 'bg-blue-600 text-white' : 'text-gray-400 hover:text-gray-600 hover:bg-gray-100'}`}
+                      className={`p-2 rounded-lg transition-colors ${viewMode === 'grid' ? 'bg-yellow-400 text-black' : 'text-gray-400 hover:text-gray-600 hover:bg-gray-100'}`}
                     >
                       <Grid className="h-5 w-5" />
                     </button>
                     <button
                       onClick={() => setViewMode('list')}
-                      className={`p-2 rounded-lg transition-colors ${viewMode === 'list' ? 'bg-blue-600 text-white' : 'text-gray-400 hover:text-gray-600 hover:bg-gray-100'}`}
+                      className={`p-2 rounded-lg transition-colors ${viewMode === 'list' ? 'bg-yellow-400 text-black' : 'text-gray-400 hover:text-gray-600 hover:bg-gray-100'}`}
                     >
                       <List className="h-5 w-5" />
                     </button>
@@ -529,7 +715,7 @@ const ProductList = () => {
                   <select
                     value={filters.sortBy}
                     onChange={(e) => handleFilterChange('sortBy', e.target.value)}
-                    className="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 min-w-0 flex-1 sm:flex-none"
+                    className="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 min-w-0 flex-1 sm:flex-none"
                   >
                     <option value="name">Name A-Z</option>
                     <option value="price-low">Price: Low to High</option>
@@ -566,7 +752,7 @@ const ProductList = () => {
                 </p>
                 <button
                   onClick={clearFilters}
-                  className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
+                  className="bg-yellow-400 text-black px-6 py-3 rounded-lg hover:bg-yellow-500 transition-colors"
                 >
                   Clear All Filters
                 </button>
@@ -580,7 +766,7 @@ const ProductList = () => {
                   <button className="px-3 py-2 border border-gray-300 rounded-md hover:bg-gray-50">
                     Previous
                   </button>
-                  <button className="px-3 py-2 bg-blue-600 text-white rounded-md">
+                  <button className="px-3 py-2 bg-yellow-400 text-black rounded-md">
                     1
                   </button>
                   <button className="px-3 py-2 border border-gray-300 rounded-md hover:bg-gray-50">

@@ -1,9 +1,8 @@
 // src/pages/SignIn.jsx
 import React, { useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
-import { Eye, EyeOff, Mail, Lock, AlertCircle, Github, Chrome, ArrowRight, Sparkles } from 'lucide-react';
+import { Eye, EyeOff, Mail, Lock, AlertCircle, ArrowRight, Sparkles } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
-import figuroLogo from '../figuroLogo.png';
 
 const SignIn = () => {
   const [formData, setFormData] = useState({
@@ -86,11 +85,6 @@ const SignIn = () => {
     setError('');
   };
 
-  const handleSocialLogin = (provider) => {
-    // In a real app, you would implement social login here
-    setError(`${provider} login would be implemented with Firebase Auth`);
-  };
-
   const handleForgotPassword = () => {
     if (!formData.email) {
       setError('Please enter your email address first');
@@ -110,26 +104,6 @@ const SignIn = () => {
       </div>
 
       <div className="relative sm:mx-auto sm:w-full sm:max-w-md">
-        {/* Logo */}
-        <div className="flex justify-center mb-8 animate-fade-in">
-          <Link to="/" className="group flex items-center">
-            <img 
-              src={figuroLogo} 
-              alt="Figuro Logo" 
-              className="h-12 w-auto object-contain group-hover:scale-105 transition-transform duration-300"
-            />
-          </Link>
-        </div>
-
-        <div className="text-center animate-fade-in">
-          <h2 className="text-4xl font-bold font-display text-gray-900 mb-3">
-            Welcome back! 👋
-          </h2>
-          <p className="text-lg text-gray-600 leading-relaxed">
-            Sign in to your account to continue your collection journey
-          </p>
-        </div>
-        
         {redirectTo !== '/' && (
           <div className="mt-6 p-4 bg-gradient-to-r from-gray-50 to-gray-100 border border-gray-200 rounded-2xl animate-fade-in">
             <div className="flex items-center justify-center space-x-2">
@@ -144,6 +118,25 @@ const SignIn = () => {
 
       <div className="mt-10 relative sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-white/80 backdrop-blur-xl py-10 px-6 shadow-strong sm:rounded-3xl sm:px-12 border border-white/20 animate-fade-in">
+          {/* Logo and Title */}
+          <div className="text-center mb-8">
+            <Link to="/" className="group flex justify-center items-center mb-6">
+              <img 
+                src="/figLogo.png" 
+                alt="Figuro Logo" 
+                className="h-20 w-auto object-contain group-hover:scale-105 transition-transform duration-300"
+              />
+            </Link>
+            <div className="space-y-2">
+              <h2 className="text-4xl font-bold bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 bg-clip-text text-transparent">
+                Welcome Back
+              </h2>
+              <p className="text-gray-600 text-sm font-medium">
+                Sign in to continue your collection journey
+              </p>
+            </div>
+          </div>
+
           <form className="space-y-6" onSubmit={handleSubmit}>
             {/* Error Message */}
             {error && (
@@ -159,36 +152,7 @@ const SignIn = () => {
               </div>
             )}
 
-            {/* Social Login Buttons */}
-            <div className="space-y-4">
-              <button
-                type="button"
-                onClick={() => handleSocialLogin('Google')}
-                className="group w-full flex justify-center items-center px-6 py-4 border-2 border-gray-200 rounded-2xl shadow-soft text-sm font-semibold text-gray-700 bg-white hover:bg-gray-50 hover:border-gray-300 transition-all duration-300 transform hover:scale-105"
-              >
-                <Chrome className="h-5 w-5 mr-3 text-blue-500 group-hover:scale-110 transition-transform" />
-                Continue with Google
-              </button>
-              
-              <button
-                type="button"
-                onClick={() => handleSocialLogin('GitHub')}
-                className="group w-full flex justify-center items-center px-6 py-4 border-2 border-gray-200 rounded-2xl shadow-soft text-sm font-semibold text-gray-700 bg-white hover:bg-gray-50 hover:border-gray-400 transition-all duration-300 transform hover:scale-105"
-              >
-                <Github className="h-5 w-5 mr-3 group-hover:scale-110 transition-transform" />
-                Continue with GitHub
-              </button>
-            </div>
 
-            {/* Divider */}
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-200" />
-              </div>
-              <div className="relative flex justify-center text-sm">
-                <span className="px-4 bg-white text-gray-500 font-medium">Or continue with email</span>
-              </div>
-            </div>
 
             {/* Email Field */}
             <div className="space-y-2">
@@ -279,10 +243,10 @@ const SignIn = () => {
               <button
                 type="submit"
                 disabled={loading}
-                className={`group relative w-full flex justify-center items-center py-4 px-6 border border-transparent text-base font-semibold rounded-2xl text-white transition-all duration-300 ${
+                className={`group relative w-full flex justify-center items-center py-4 px-6 border border-transparent text-base font-semibold rounded-2xl text-black transition-all duration-300 ${
                   loading
-                    ? 'bg-gray-400 cursor-not-allowed'
-                    : 'bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 shadow-medium hover:shadow-strong transform hover:scale-105'
+                    ? 'bg-gray-400 cursor-not-allowed text-white'
+                    : 'bg-gradient-to-r from-yellow-400 to-yellow-500 hover:from-yellow-500 hover:to-yellow-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 shadow-medium hover:shadow-strong transform hover:scale-105'
                 }`}
               >
                 {loading ? (
@@ -309,18 +273,18 @@ const SignIn = () => {
               </div>
               <div className="space-y-3">
                 <button
-                  onClick={() => handleDemoLogin('demo@figuro.com', 'password123')}
+                  onClick={() => handleDemoLogin('demo@figuro.com', 'Password123')}
                   className="w-full text-left p-4 text-sm text-blue-700 hover:bg-blue-100 rounded-xl transition-all duration-200 border border-blue-200 hover:border-blue-300"
                 >
                   <div className="font-semibold">👤 Customer Account</div>
-                  <div className="text-xs opacity-75 mt-1">demo@figuro.com / password123</div>
+                  <div className="text-xs opacity-75 mt-1">demo@figuro.com / Password123</div>
                 </button>
                 <button
-                  onClick={() => handleDemoLogin('admin@figuro.com', 'admin123')}
+                  onClick={() => handleDemoLogin('admin@figuro.com', 'Admin123')}
                   className="w-full text-left p-4 text-sm text-purple-700 hover:bg-purple-100 rounded-xl transition-all duration-200 border border-purple-200 hover:border-purple-300"
                 >
                   <div className="font-semibold">👑 Admin Account</div>
-                  <div className="text-xs opacity-75 mt-1">admin@figuro.com / admin123</div>
+                  <div className="text-xs opacity-75 mt-1">admin@figuro.com / Admin123</div>
                 </button>
               </div>
             </div>

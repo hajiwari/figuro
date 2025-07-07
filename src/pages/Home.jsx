@@ -5,6 +5,10 @@ import { ArrowRight, Star, Truck, Shield, RefreshCw } from 'lucide-react';
 import ProductCard from '../components/ProductCard';
 
 const Home = () => {
+  // State for loading
+  const [isLoading, setIsLoading] = useState(true);
+  const [contentLoaded, setContentLoaded] = useState(false);
+
   // State for animated counters
   const [stats, setStats] = useState({
     collectors: 0,
@@ -15,15 +19,43 @@ const Home = () => {
   // State for section visibility
   const [visibleSections, setVisibleSections] = useState(new Set());
   
+  // State for typewriter effect
+  const [currentPhraseIndex, setCurrentPhraseIndex] = useState(0);
+  const [currentText, setCurrentText] = useState('');
+  const [isTyping, setIsTyping] = useState(true);
+  
+  // Phrases for typewriter effect
+  const phrases = [
+    'Collection!',
+    'Display!',
+    'Shelf Game!',
+    'Hunt!',
+    'Passion!'
+  ];
+  
   // Refs for sections
   const featuresRef = useRef(null);
   const categoriesRef = useRef(null);
   const productsRef = useRef(null);
   const newsletterRef = useRef(null);
 
+  // Loading effect
+  useEffect(() => {
+    const loadingTimer = setTimeout(() => {
+      setContentLoaded(true);
+      // Additional delay for smooth transition
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 500);
+    }, 3000); // 3 seconds loading time
+
+    return () => clearTimeout(loadingTimer);
+  }, []);
+
   // Animate counters on mount
   useEffect(() => {
-    const animateCounters = () => {
+    if (!isLoading) {
+      const animateCounters = () => {
       const targetStats = {
         collectors: 10000,
         figures: 5000,
@@ -56,13 +88,49 @@ const Home = () => {
       }, stepDuration);
     };
 
-    // Start animation after component mounts
-    const timer = setTimeout(animateCounters, 500);
+      // Start animation after component mounts
+      const timer = setTimeout(animateCounters, 1000); // Delay after loading
+      
+      return () => {
+        clearTimeout(timer);
+      };
+    }
+  }, [isLoading]);
+
+  // Typewriter effect
+  useEffect(() => {
+    if (isLoading) return;
     
-    return () => {
-      clearTimeout(timer);
-    };
-  }, []);
+    const currentPhrase = phrases[currentPhraseIndex];
+    
+    if (isTyping) {
+      // Typing in
+      if (currentText.length < currentPhrase.length) {
+        const timer = setTimeout(() => {
+          setCurrentText(currentPhrase.slice(0, currentText.length + 1));
+        }, 100); // Typing speed
+        return () => clearTimeout(timer);
+      } else {
+        // Pause before typing out
+        const timer = setTimeout(() => {
+          setIsTyping(false);
+        }, 2000); // Display time
+        return () => clearTimeout(timer);
+      }
+    } else {
+      // Typing out
+      if (currentText.length > 0) {
+        const timer = setTimeout(() => {
+          setCurrentText(currentText.slice(0, -1));
+        }, 50); // Backspace speed
+        return () => clearTimeout(timer);
+      } else {
+        // Move to next phrase
+        setCurrentPhraseIndex((prev) => (prev + 1) % phrases.length);
+        setIsTyping(true);
+      }
+    }
+  }, [currentText, isTyping, currentPhraseIndex, phrases, isLoading]);
 
   // Intersection Observer for scroll animations
   useEffect(() => {
@@ -92,21 +160,23 @@ const Home = () => {
       });
     };
   }, []);
-  // Sample featured products data
+  // Sample featured products data - synced with ProductList.jsx
   const featuredProducts = [
     {
       id: 1,
       name: "Demon Slayer Tanjiro Kamado Figure",
       brand: "Good Smile Company",
+      franchise: "Demon Slayer",
       description: "High-quality PVC figure with detailed sculpting and vibrant colors",
       price: 4999,
       originalPrice: 5999,
-      image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=400&fit=crop",
+      image: "https://otakuhobbitoysph.com/cdn/shop/files/1-56_42841355-65a4-4f83-984a-4eb71910a25b.jpg",
       rating: 4.8,
       reviewCount: 124,
       stock: 15,
       scale: "1/8",
       height: "23cm",
+      category: "anime",
       isNew: true,
       onSale: true,
       isLimited: false
@@ -115,46 +185,52 @@ const Home = () => {
       id: 2,
       name: "Attack on Titan Eren Yeager",
       brand: "Kotobukiya",
+      franchise: "Attack on Titan",
       description: "Premium collectible figure with interchangeable parts",
       price: 7199,
-      image: "https://images.unsplash.com/photo-1601814933824-fd0b574dd592?w=400&h=400&fit=crop",
+      image: "https://hubbytetoystore.com/cdn/shop/products/PP960_eren_repkg_01.jpg",
       rating: 4.9,
       reviewCount: 89,
       stock: 8,
       scale: "1/7",
       height: "26cm",
+      category: "anime",
       isNew: false,
       onSale: false,
       isLimited: true
     },
     {
       id: 3,
-      name: "Naruto Uzumaki Sage Mode",
+      name: "S.H.Figuarts Naruto Shippuden Uzumaki Naruto Sage Mode",
       brand: "Banpresto",
+      franchise: "Naruto",
       description: "Detailed figure featuring Naruto in his iconic Sage Mode",
       price: 3899,
-      image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=400&fit=crop",
+      image: "https://hyper-toys.com/shop/s-h-figuarts-naruto-shippuden-uzumaki-naruto-sage-mode-savior-of-konoha/",
       rating: 4.7,
       reviewCount: 156,
       stock: 22,
       scale: "1/8",
       height: "21cm",
+      category: "anime",
       isNew: true,
       onSale: false,
       isLimited: false
     },
     {
       id: 4,
-      name: "One Piece Monkey D. Luffy",
+      name: "Portrait of Pirates One Piece Monkey D. Luffy",
       brand: "Megahouse",
+      franchise: "One Piece",
       description: "Portrait of Pirates series with exceptional attention to detail",
       price: 8299,
-      image: "https://images.unsplash.com/photo-1601814933824-fd0b574dd592?w=400&h=400&fit=crop",
+      image: "https://m.media-amazon.com/images/I/61La4QK5NXL._AC_SX679_.jpg",
       rating: 4.9,
       reviewCount: 203,
       stock: 5,
       scale: "1/8",
       height: "24cm",
+      category: "anime",
       isNew: false,
       onSale: false,
       isLimited: true
@@ -164,71 +240,134 @@ const Home = () => {
   const categories = [
     {
       name: "Anime Figures",
-      image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=300&h=200&fit=crop",
+      image: "https://mrwallpaper.com/images/high/demon-slayer-anime-figures-2now37a0ly211xg1.jpg",
       count: "500+ Items"
     },
     {
       name: "Action Figures",
-      image: "https://images.unsplash.com/photo-1601814933824-fd0b574dd592?w=300&h=200&fit=crop",
+      image: "https://images.squarespace-cdn.com/content/v1/51b3dc8ee4b051b96ceb10de/cae311df-3ffb-49cb-8f29-c3b0933509a1/hot-toys-deadpool-wolverine-figures-feature-lady-pool-shirtless-wolverine-and-more.jpg",
       count: "300+ Items"
     },
     {
       name: "Collectibles",
-      image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=300&h=200&fit=crop",
+      image: "https://cdn.shopify.com/s/files/1/0013/6105/1705/files/Ranked_The_Top_7_Best_Action_Figure_Brands_for_Collectors.jpg?v=1713425120",
       count: "200+ Items"
     },
     {
       name: "Limited Edition",
-      image: "https://images.unsplash.com/photo-1601814933824-fd0b574dd592?w=300&h=200&fit=crop",
+      image: "https://images.bigbadtoystore.com/images/p/full/2025/05/46b94f43-1cd3-4c5d-8c38-67e31c963e2c.jpg",
       count: "50+ Items"
     }
   ];
 
   return (
     <div className="min-h-screen">
-      {/* Hero Section */}
-      <section className="relative h-screen min-h-screen">
-        {/* Background Video */}
+      {/* Loading Screen */}
+      {isLoading && (
+        <div className={`fixed inset-0 z-50 bg-black flex flex-col items-center justify-center transition-opacity duration-500 ${
+          contentLoaded ? 'opacity-0' : 'opacity-100'
+        }`}>
+          <div className="flex flex-col items-center space-y-8">
+            {/* Logo */}
+            <div className="animate-pulse">
+              <img 
+                src="/figuroLogo.png" 
+                alt="Figuro Logo" 
+                className="h-16 md:h-20 w-auto filter invert brightness-100 contrast-100"
+              />
+            </div>
+            
+            {/* Loading Animation */}
+            <div className="relative">
+              <div className="w-12 h-12 border-4 border-white/20 border-t-white rounded-full animate-spin"></div>
+            </div>            
+            
+          </div>
+        </div>
+      )}
+
+      {/* Main Content */}
+      <div className={`transition-opacity duration-1000 ${
+        isLoading ? 'opacity-0' : 'opacity-100'
+      }`}>
+        {/* Hero Section */}
+        <section className="relative h-screen min-h-screen">
+        {/* Background Video - No loading animation, just smooth entrance */}
         <div className="absolute inset-0 w-full h-full overflow-hidden">
           {/* YouTube Embed with specific start and end times */}
           <iframe
-            className="absolute inset-0 w-full h-full object-cover scale-150 md:scale-150 lg:scale-150 xl:scale-125"
-            src="https://www.youtube.com/embed/P0napeBnTC8?autoplay=1&mute=1&loop=1&playlist=P0napeBnTC8&controls=0&showinfo=0&rel=0&iv_load_policy=3&modestbranding=1&start=64&end=230&version=3"
+            className="absolute inset-0 w-full h-full object-cover"
+            src="https://www.youtube.com/embed/P0napeBnTC8?autoplay=1&mute=1&loop=1&playlist=P0napeBnTC8&controls=0&showinfo=0&rel=0&iv_load_policy=3&modestbranding=1&start=64&end=230&version=3&vq=hd1080&hd=1"
             title="Background Video"
             frameBorder="0"
             allow="autoplay; fullscreen"
             style={{ 
               pointerEvents: 'none',
+              // Aggressive scaling for mobile to eliminate letterboxing
+              transform: 'scale(4)',
+              transformOrigin: 'center center',
               minWidth: '100%',
-              minHeight: '100%',
-              width: '100vw',
-              height: '100vh',
-              objectFit: 'cover'
+              minHeight: '100%'
             }}
           ></iframe>
           {/* Dark overlay for text readability */}
           <div className="absolute inset-0 bg-black/50"></div>
+          
+          {/* Add CSS for responsive scaling */}
+          <style dangerouslySetInnerHTML={{__html: `
+            @media (min-width: 640px) {
+              iframe {
+                transform: scale(2.5) !important;
+              }
+            }
+            @media (min-width: 768px) {
+              iframe {
+                transform: scale(2) !important;
+              }
+            }
+            @media (min-width: 1024px) {
+              iframe {
+                transform: scale(1.8) !important;
+              }
+            }
+            @media (min-width: 1280px) {
+              iframe {
+                transform: scale(1.5) !important;
+              }
+            }
+          `}} />
         </div>
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center">
           <div className="w-full lg:w-1/2 text-left relative">
-            <div className="animate-fade-in">
-              <div className="flex items-center mb-6 lg:mb-8">
+            <div className={`transition-all duration-1000 delay-500 ${
+              isLoading ? 'opacity-0 translate-y-20' : 'opacity-100 translate-y-0'
+            }`}>
+              <div className={`flex items-center mb-6 lg:mb-8 transition-all duration-1000 delay-700 ${
+                isLoading ? 'opacity-0 translate-y-10' : 'opacity-100 translate-y-0'
+              }`}>
                 <img 
                   src="/figuroLogo.png" 
                   alt="Figuro Logo" 
                   className="h-8 md:h-10 lg:h-12 w-auto filter invert brightness-0 contrast-100"
                 />
               </div>
-              <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold font-display mb-4 lg:mb-6 leading-relaxed">
+              <h1 className={`text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold font-display mb-4 lg:mb-6 leading-relaxed transition-all duration-1000 delay-900 ${
+                isLoading ? 'opacity-0 translate-y-20' : 'opacity-100 translate-y-0'
+              }`}>
                 <span className="text-white">Level Up Your</span>
                 <span className="block bg-gradient-to-r from-yellow-300 to-orange-300 bg-clip-text text-transparent">
-                  Shelf Game
+                  {currentText}
+                  <span className="animate-pulse">|</span>
                 </span>
               </h1>
-              <p className="text-lg sm:text-xl mb-6 lg:mb-8 text-gray-200 leading-relaxed max-w-xl">
+              <p className={`text-lg sm:text-xl mb-6 lg:mb-8 text-gray-200 leading-relaxed max-w-xl transition-all duration-1000 delay-1100 ${
+                isLoading ? 'opacity-0 translate-y-20' : 'opacity-100 translate-y-0'
+              }`}>
                 Discover the world's largest collection of premium anime figures, action figures, and collectibles from your favorite series. Each piece tells a story.
               </p>
-              <div className="flex flex-col sm:flex-row gap-4 mb-12">
+              <div className={`flex flex-col sm:flex-row gap-4 mb-12 transition-all duration-1000 delay-1300 ${
+                isLoading ? 'opacity-0 translate-y-20' : 'opacity-100 translate-y-0'
+              }`}>
                 <Link
                   to="/products"
                   className="group bg-yellow-400 text-gray-900 px-6 lg:px-8 py-3 lg:py-4 rounded-2xl font-semibold hover:bg-yellow-300 transition-all duration-300 flex items-center justify-center shadow-strong hover:shadow-medium transform hover:scale-105"
@@ -245,7 +384,9 @@ const Home = () => {
               </div>
               
               {/* Animated Stats */}
-              <div className="flex items-center gap-8 sm:gap-16 mt-8 lg:mt-12 pt-6 lg:pt-8 border-t border-white/20">
+              <div className={`flex items-center gap-8 sm:gap-16 mt-8 lg:mt-12 pt-6 lg:pt-8 border-t border-white/20 transition-all duration-1000 delay-1500 ${
+                isLoading ? 'opacity-0 translate-y-20' : 'opacity-100 translate-y-0'
+              }`}>
                 <div className="text-left">
                   <div className="text-2xl sm:text-3xl font-bold text-white tabular-nums">
                     {stats.collectors.toLocaleString()}+
@@ -274,7 +415,9 @@ const Home = () => {
       <section 
         ref={featuresRef}
         data-section="features"
-        className="py-20 bg-gradient-to-b from-gray-50 to-white"
+        className={`py-20 bg-gradient-to-b from-gray-50 to-white transition-all duration-1000 delay-300 ${
+          isLoading ? 'opacity-0 translate-y-20' : 'opacity-100 translate-y-0'
+        }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className={`text-center mb-16 transition-all duration-700 ${
@@ -342,7 +485,9 @@ const Home = () => {
       <section 
         ref={categoriesRef}
         data-section="categories"
-        className="py-20 bg-white"
+        className={`py-20 bg-white transition-all duration-1000 delay-500 ${
+          isLoading ? 'opacity-0 translate-y-20' : 'opacity-100 translate-y-0'
+        }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className={`text-center mb-16 transition-all duration-700 ${
@@ -396,7 +541,9 @@ const Home = () => {
       <section 
         ref={productsRef}
         data-section="products"
-        className="py-20 bg-gradient-to-b from-gray-50 to-white"
+        className={`py-20 bg-gradient-to-b from-gray-50 to-white transition-all duration-1000 delay-700 ${
+          isLoading ? 'opacity-0 translate-y-20' : 'opacity-100 translate-y-0'
+        }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className={`text-center mb-16 transition-all duration-700 ${
@@ -450,7 +597,9 @@ const Home = () => {
       <section 
         ref={newsletterRef}
         data-section="newsletter"
-        className="py-20 bg-gradient-to-br from-gray-700 via-gray-800 to-gray-900 relative overflow-hidden"
+        className={`py-20 bg-gradient-to-br from-gray-700 via-gray-800 to-gray-900 relative overflow-hidden transition-all duration-1000 delay-900 ${
+          isLoading ? 'opacity-0 translate-y-20' : 'opacity-100 translate-y-0'
+        }`}
       >
         <div className="absolute inset-0 opacity-30">
           <div className="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent"></div>
@@ -488,6 +637,7 @@ const Home = () => {
           </div>
         </div>
       </section>
+      </div>
     </div>
   );
 };
